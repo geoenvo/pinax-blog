@@ -1,6 +1,5 @@
 from django import forms
 from django.utils import timezone
-from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 from .conf import settings
@@ -8,11 +7,13 @@ from .models import Post, Revision
 from .utils import can_tweet, load_path_attr
 from .signals import post_published
 
+from ckeditor.widgets import CKEditorWidget
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+
 
 FIELDS = [
     "section",
     "author",
-    "markup",
     "title",
     "slug",
     "teaser",
@@ -39,11 +40,11 @@ class AdminPostForm(forms.ModelForm):
     )
     teaser = forms.CharField(
         label=_("Teaser"),
-        widget=forms.Textarea(attrs={"style": "width: 80%;"}),
+        widget=CKEditorWidget(),
     )
     content = forms.CharField(
         label=_("Content"),
-        widget=forms.Textarea(attrs={"style": "width: 80%; height: 300px;"})
+        widget=CKEditorUploadingWidget(),
     )
     description = forms.CharField(
         label=_("Description"),
@@ -86,14 +87,8 @@ class AdminPostForm(forms.ModelForm):
                 post.published = timezone.now()
                 published = True
 
-        render_func = curry(
-            load_path_attr(
-                settings.PINAX_BLOG_MARKUP_CHOICE_MAP[self.cleaned_data["markup"]]["parser"]
-            )
-        )
-
-        post.teaser_html = render_func(self.cleaned_data["teaser"])
-        post.content_html = render_func(self.cleaned_data["content"])
+        post.teaser_html = self.cleaned_data["teaser"]
+        post.content_html = self.cleaned_data["content"]
         post.updated = timezone.now()
         post.save()
 

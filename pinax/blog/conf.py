@@ -13,15 +13,6 @@ def is_installed(package):
         return False
 
 
-DEFAULT_MARKUP_CHOICE_MAP = {
-    "markdown": {"label": "Markdown", "parser": "pinax.blog.parsers.markdown_parser.parse"}
-}
-if is_installed("creole"):
-    DEFAULT_MARKUP_CHOICE_MAP.update({
-        "creole": {"label": "Creole", "parser": "pinax.blog.parsers.creole_parser.parse"},
-    })
-
-
 class PinaxBlogAppConf(AppConf):
 
     ALL_SECTION_NAME = "all"
@@ -31,16 +22,8 @@ class PinaxBlogAppConf(AppConf):
     ]
     FEED_TITLE = "Blog"
     SECTION_FEED_TITLE = "Blog (%s)"
-    MARKUP_CHOICE_MAP = DEFAULT_MARKUP_CHOICE_MAP
-    MARKUP_CHOICES = DEFAULT_MARKUP_CHOICE_MAP
     SLUG_UNIQUE = False
     PAGINATE_BY = 10
-
-    def configure_markup_choices(self, value):
-        return [
-            (key, value[key]["label"])
-            for key in value.keys()
-        ]
 
     class Meta:
         prefix = "pinax_blog"
