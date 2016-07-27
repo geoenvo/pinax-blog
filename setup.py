@@ -35,10 +35,9 @@ setup(
     ],
     install_requires=[
         "django-appconf>=1.0.1",
-        "pytz==2015.7",
+        "pytz>=2015.7",
         "Pillow>=3.0.0",
-        "Markdown>=2.6.5",
-        "Pygments>=2.0.2"
+        "django-ckeditor==5.0.3"
     ],
     test_suite="runtests.runtests",
     classifiers=[
